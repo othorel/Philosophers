@@ -14,13 +14,24 @@
 
 int	main(int ac, char **av)
 {
-	t_philo *table;
+	t_table	table;
+	int		i;
 
-	table = setup_table(ac, av);
-	if (!table)
+	i = 0;
+	if (init_table(&table, ac, av))
+	{
+		printf("Error: invalid arguments\n");
+		printf("Usage: ./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [must_eat_count]\n");
 		return (1);
-	if (!start_simulation(table))
-		return (1);
-	cleanup_table(&table);
+	}
+	start_simulation(&table);
+	while (i < table.nb_philo)
+	{
+		pthread_mutex_destroy(&table.forks[i]);
+		i++;
+	}
+	pthread_mutex_destroy(&table.print_lock);
+	free(table.forks);
+	free(table.philos);
 	return (0);
 }

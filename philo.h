@@ -19,57 +19,46 @@
 # include <unistd.h>
 # include <sys/time.h>
 
-# define RED "\001\033[1;31m\002"
-# define GREEN "\001\033[1;32m\002"
-# define YELLOW "\001\033[1;33m\002"
-# define BLUE "\001\033[1;34m\002"
-# define PURPLE "\001\033[1;35m\002"
-# define CYAN "\001\033[1;36m\002"
-# define WHITE "\001\033[0;37m\002"
-# define BOLD_WHITE "\001\033[1;37m\002"
-
 typedef struct s_philo
 {
 	int				id;
 	int				nb_meals;
 	long			last_meal;
-	int				is_done;
-	int				*is_over;
-	t_table			table;
-	pthread_mutex_t	thread_id;
-	pthread_mutex_t	last_meal_lock;
-	pthread_mutex_t	is_done_lock;
-	pthread_mutex_t	*print_zone;
-	pthread_mutex_t	*forks[2];
-	pthread_mutex_t	*is_over_lock;
+	pthread_t		thread;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+	struct s_table	*table;
 
 }					t_philo;
 
 typedef struct s_table
 {
-	long			start_time;
 	int				nb_philo;
 	long			time_to_die;
 	long			time_to_eat;
 	long			time_to_sleep;
-	int				nb_meals;
-	int				is_over;
-	t_philo			**philos;
-	pthread_mutex_t	print;
+	int				must_eat_count;
+	int				dead;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	is_over_lock;
-	phread_t		reaper;
+	pthread_mutex_t	print_lock;
+	t_philo			*philos;
 }					t_table;
 
-enum e_fork{
-	RIGHT,
-	LEFT
-};
+void	print_action(t_philo *philo, char *action);
+void	*philo_life(void *arg);
+void	start_simulation(t_table *table);
+
+int		init_table(t_table *table, int ac, char **av);
+
+int		check_args(int ac, char **av);
 
 t_table	*setup_table(int ac, char **av);
+void	*clean_table(t_table **table);
 
-int		create_philo(int i, t_table *table);
-
-int		ft_isum(char *str);
+int		ft_isnumeric(char *str);
 int		ft_atoi(char *str);
+void	ft_putstr_fd(char *str, int fd);
 long	get_time(void);
+void	sleep_ms(long time);
+
+#endif

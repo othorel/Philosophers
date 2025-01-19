@@ -12,12 +12,12 @@
 
 #include "philo.h"
 
-int	ft_isum(char *str)
+int	ft_isnumeric(char *str)
 {
 	int	i;
 
 	i = 0;
-	if (str[i] == '-' || str[i] =='+')
+	if (str[i] == '+' || str[i] == '-')
 		i++;
 	while (str[i])
 	{
@@ -53,10 +53,27 @@ int	ft_atoi(char *str)
 	return (result * sign);
 }
 
+void ft_putstr_fd(char *str, int fd)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		write(fd, &str[i], 1);
+		i++;
+	}
+}
+
 long	get_time(void)
 {
 	struct timeval	time;
 
 	gettimeofday(&time, NULL);
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
+
+void	sleep_ms(long time)
+{
+	usleep(time * 1000);
 }
