@@ -14,7 +14,7 @@
 
 static int	get_args(int ac, char **av, t_table *table)
 {
-	table->last_meal = get_time();
+	table->philos->last_meal = get_time();
 	table->nb_philo = ft_atoi(av[1]);
 	table->time_to_die = ft_atoi(av[2]);
 	table->time_to_eat = ft_atoi(av[3]);
@@ -68,7 +68,7 @@ t_table	*setup_table(int ac, char **av)
 	if (!table)
 		return (NULL);
 	pthread_mutex_init(&table->print_lock, NULL);
-	pthread_mutex_init(&table->dead_lock, NULL);
+	pthread_mutex_init(&table->dead, NULL);
 	if (!get_args(ac, av, table) || !get_forks(table) || !get_philos(table))
 		return (clean_table(&table));
 	table->dead = 0;
