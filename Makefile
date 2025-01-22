@@ -1,21 +1,22 @@
 # Variables
-SRCS        =   check_args.c     \
-				clean_table.c    \
-				create_philo.c   \
-				main.c           \
-				setup_table.c    \
-				utils.c          
+SRCS        =   src/check_args.c     \
+				src/init_all.c       \
+				src/main.c           \
+				src/philo_dead.c     \
+				src/simulation.c     \
+				src/thread.c         \
+				src/utils.c                   
 
 OBJ_DIR     =   obj
-OBJS        =   $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
+OBJS        =   $(SRCS:philo/%.c=$(OBJ_DIR)/%.o)
 
-HEADERS     =   philo.h    
+HEADERS     =   ./src/philo.h    
 
 NAME        =   philo
 NAME_BONUS  =   philo_bonus
 
 CC          =   cc
-CFLAGS      =   -Wall -Wextra -Werror -g -Iincludes
+CFLAGS      =   -Wall -Wextra -Werror -g -pthread
 
 # Commandes colorées et décoratives
 GREEN       =   \033[1;35m
@@ -30,46 +31,35 @@ $(OBJ_DIR)/%.o: src/%.c $(HEADERS)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 # Cible principale
-all: libft mlx $(NAME)
+all: $(NAME)
 
 $(NAME): $(OBJS) $(HEADERS)
 	@echo "$(CYAN)Linking...$(RESET)"
-	@$(CC) $(OBJS) -o $(NAME) $(FLAGS)
+	@$(CC) $(OBJS) -o $(NAME) $(CFLAGS)
 	@echo "$(GREEN)Executable $(NAME) created! $(SMILEY2)$(RESET)"
-	@echo "$(GREEN)Usage: ./fdf [map.fdf]$(RESET)"
+	@echo "$(GREEN)Usage: ./philo$(RESET)"
 
 # Cible bonus
-bonus: libft mlx $(NAME_BONUS)
+bonus: $(NAME_BONUS)
 
 $(NAME_BONUS): $(OBJS) $(HEADERS)
 	@echo "$(CYAN)Linking bonus...$(RESET)"
-	@$(CC) $(OBJS) -o $(NAME_BONUS) $(FLAGS)
+	@$(CC) $(OBJS) -o $(NAME_BONUS) $(CFLAGS)
 	@echo "$(GREEN)Executable $(NAME_BONUS) created! $(SMILEY2)$(RESET)"
-	@echo "$(GREEN)Usage: ./fdf_bonus [map.fdf]$(RESET)"
+	@echo "$(GREEN)Usage: ./philo_bonus$(RESET)"
 
 # Nettoyage des fichiers objets
 clean:
 	@rm -rf $(OBJ_DIR)
-	@make -s clean -C libft
-	@make -s clean -C minilibx-linux >/dev/null 2>&1
 	@echo "$(CYAN)Object files cleaned!$(RESET)"
 
 # Nettoyage complet
 fclean: clean
 	@rm -rf $(NAME) $(NAME_BONUS)
-	@make -s fclean -C libft
-	@echo "$(CYAN)Executable $(NAME) or $(NAME_BONUS) removed!$(RESET)"
+	@echo "$(CYAN)Executable $(NAME) and $(NAME_BONUS) removed!$(RESET)"
 
 # Recompiler à partir de zéro
 re: fclean all
 
-# Génération de la bibliothèque libft avec sortie masquée
-libft:
-	@make -s -C libft
-
-# Génération de la bibliothèque minilibx avec sortie masquée
-mlx:
-	@make -s -C minilibx-linux all >/dev/null 2>&1
-
 # Éviter les conflits avec des fichiers portant les noms des cibles
-.PHONY: all clean fclean re libft mlx bonus
+.PHONY: all clean fclean re bonus
