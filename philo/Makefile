@@ -13,7 +13,6 @@ OBJS        =   $(SRCS:philo/%.c=$(OBJ_DIR)/%.o)
 HEADERS     =   ./src/philo.h    
 
 NAME        =   philo
-NAME_BONUS  =   philo_bonus
 
 CC          =   cc
 CFLAGS      =   -Wall -Wextra -Werror -g -pthread
@@ -22,8 +21,7 @@ CFLAGS      =   -Wall -Wextra -Werror -g -pthread
 GREEN       =   \033[1;35m
 CYAN        =   \033[1;34m
 RESET       =   \033[0m
-SMILEY      =   👍
-SMILEY2	    =   😎
+SMILEY      =   👍😎
 
 # Règle pour générer chaque fichier .o dans obj/
 $(OBJ_DIR)/%.o: src/%.c $(HEADERS)
@@ -36,17 +34,8 @@ all: $(NAME)
 $(NAME): $(OBJS) $(HEADERS)
 	@echo "$(CYAN)Linking...$(RESET)"
 	@$(CC) $(OBJS) -o $(NAME) $(CFLAGS)
-	@echo "$(GREEN)Executable $(NAME) created! $(SMILEY2)$(RESET)"
-	@echo "$(GREEN)Usage: ./philo$(RESET)"
-
-# Cible bonus
-bonus: $(NAME_BONUS)
-
-$(NAME_BONUS): $(OBJS) $(HEADERS)
-	@echo "$(CYAN)Linking bonus...$(RESET)"
-	@$(CC) $(OBJS) -o $(NAME_BONUS) $(CFLAGS)
-	@echo "$(GREEN)Executable $(NAME_BONUS) created! $(SMILEY2)$(RESET)"
-	@echo "$(GREEN)Usage: ./philo_bonus$(RESET)"
+	@echo "$(GREEN)Executable $(NAME) created! $(SMILEY)$(RESET)"
+	@echo "$(GREEN)Usage: ./philo [time_to_die] [time_to_eat] [time_to_sleep]$(RESET)"
 
 # Nettoyage des fichiers objets
 clean:
@@ -55,11 +44,11 @@ clean:
 
 # Nettoyage complet
 fclean: clean
-	@rm -rf $(NAME) $(NAME_BONUS)
-	@echo "$(CYAN)Executable $(NAME) and $(NAME_BONUS) removed!$(RESET)"
+	@rm -rf $(NAME)
+	@echo "$(CYAN)Executable $(NAME) removed!$(RESET)"
 
 # Recompiler à partir de zéro
 re: fclean all
 
 # Éviter les conflits avec des fichiers portant les noms des cibles
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re

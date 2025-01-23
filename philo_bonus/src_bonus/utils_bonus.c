@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/22 10:08:03 by olthorel          #+#    #+#             */
-/*   Updated: 2025/01/22 15:54:11 by olthorel         ###   ########.fr       */
+/*   Created: 2025/01/23 13:03:42 by olthorel          #+#    #+#             */
+/*   Updated: 2025/01/23 13:06:50 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 int	ft_atoll(char *str)
 {
@@ -47,7 +47,7 @@ int	ft_strlen(char *str)
 	return (i);
 }
 
-void	ft_mutex_destroy(char *str, t_table *table, pthread_mutex_t *forks)
+void	ft_sem_destroy(char *str, t_table *table, sem_t *forks)
 {
 	int	i;
 
@@ -57,12 +57,12 @@ void	ft_mutex_destroy(char *str, t_table *table, pthread_mutex_t *forks)
 		write(2, str, ft_strlen(str));
 		write(2, "\n", 1);
 	}
-	pthread_mutex_destroy(&table->write_lock);
-	pthread_mutex_destroy(&table->meal_lock);
-	pthread_mutex_destroy(&table->dead_lock);
+	sem_close(table->write_lock);
+	sem_close(table->dead_lock);
+	sem_close(table->meal_lock);
 	while (i < table->philos[0].num_of_philos)
 	{
-		pthread_mutex_destroy(&forks[i]);
+		sem_close(table->philos[i].right_fork);
 		i++;
 	}
 }
