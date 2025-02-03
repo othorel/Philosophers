@@ -6,7 +6,7 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 14:42:22 by olthorel          #+#    #+#             */
-/*   Updated: 2025/02/03 17:24:48 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/02/03 18:23:28 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	*ft_check_monitor(void *ac)
 			sem_wait(philo->block_print);
 			printf("%lld %d %s\n", ft_get_time() - philo->time_start,
 				philo->index, RED "Philo died 💀" RESET);
+			sem_post(philo->block_print);
 			philo->stop = 1;
 			break ;
 		}
@@ -55,10 +56,10 @@ void	philo_start_simul(t_philo *philo)
 		ft_print_message(philo, GREEN "Has taken a fork 🍴" RESET);
 		ft_print_message(philo, GREEN "Has taken a fork 🍴" RESET);
 		ft_print_message(philo, YELLOW "Is eating 🍝" RESET);
+		sem_post(philo->block_fork);
+		sem_post(philo->block_fork);
 		ft_usleep(philo->time_to_eat, philo);
 		philo->time_meal = ft_get_time();
-		sem_post(philo->block_fork);
-		sem_post(philo->block_fork);
 		philo->num_eat_count += 1;
 		ft_print_message(philo, BLUE "Is sleeping 😴" RESET);
 		ft_usleep(philo->time_to_sleep, philo);
@@ -82,11 +83,8 @@ void	ft_cleanup(t_philo **philo)
 		if (status != 0)
 		{
 			i = -1;
-			while (i < temp->num_of_philos)
-			{
+			while (++i < temp->num_of_philos)
 				kill(temp->pid[i], SIGKILL);
-				i++;
-			}
 			break ;
 		}
 		i++;
