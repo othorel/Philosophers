@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/23 11:39:50 by olthorel          #+#    #+#             */
-/*   Updated: 2025/01/23 11:43:41 by olthorel         ###   ########.fr       */
+/*   Created: 2025/02/03 13:03:25 by olthorel          #+#    #+#             */
+/*   Updated: 2025/02/03 13:11:16 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,7 @@ int	philo_dead(t_philo *philo, size_t die)
 {
 	sem_wait(philo->meal_lock);
 	if (ft_get_time() - philo->last_meal >= (long)die && philo->eating == 0)
-	{
-		sem_post(philo->meal_lock);
-		return (1);
-	}
+		return (sem_post(philo->meal_lock), 1);
 	sem_post(philo->meal_lock);
 	return (0);
 }
@@ -33,7 +30,7 @@ int	check_if_dead(t_philo *philo)
 	{
 		if (philo_dead(&philo[i], philo[i].time_to_die))
 		{
-			ft_print_message("Philo died", &philo[i], philo[i].id);
+			ft_print_message(RED "Philo died" RESET, &philo[i], philo[i].id);
 			sem_wait(philo[0].dead_lock);
 			*philo->dead = 1;
 			sem_post(philo[0].dead_lock);

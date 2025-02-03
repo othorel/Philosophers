@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   semaphore_bonus.c                                  :+:      :+:    :+:   */
+/*   sem.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/23 11:47:01 by olthorel          #+#    #+#             */
-/*   Updated: 2025/01/23 16:59:51 by olthorel         ###   ########.fr       */
+/*   Created: 2025/02/03 11:38:24 by olthorel          #+#    #+#             */
+/*   Updated: 2025/02/03 11:46:55 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,34 +37,32 @@ void	*ft_philo_simul(void *ptr)
 	return (ptr);
 }
 
-int	ft_start_simulation(t_table *table, sem_t *forks)
+int	ft_create_process(t_data *data, t_philo *philo)
 {
 	pid_t	pid;
 	int			i;
 
-	pid = fork();
-    if (pid == 0)
-    {
-        thread_monitor(table->philos);
-        exit (0);
-    }
-    i = 0;
-	while (i < table->philos[0].num_of_philos)
+	i = 0;
+	while (i < philo[0].num_of_philos)
 	{
 		pid = fork();
+		if (pid == -1)
+		{
+			ft_sem_destroy("Error: fork failed", data, NULL);
+			return (1);
+		}
 		if (pid == 0)
 		{
-			ft_philo_simul(&table->philos[i]);
-			exit (0);
+			philo[i].pid = getpid();
+			ft_philo_simul(&philo[i]);
+			exit(0);
 		}
 		i++;
 	}
-	i = 0;
-	while (i < table->philos[0].num_of_philos + 1)
+	while (i < philo[0].num_of_philos)
 	{
-		wait(NULL);
+		waitpid(-1, NULL, 0);
 		i++;
 	}
 	return (0);
 }
-

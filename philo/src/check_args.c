@@ -6,7 +6,7 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 11:07:29 by olthorel          #+#    #+#             */
-/*   Updated: 2025/01/22 15:59:41 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/02/03 10:04:27 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,15 @@ int	ft_check_args(char **av)
 {
 	if (ft_atoll(av[1]) > MAX_PHILO || ft_atoll(av[1]) <= 0
 		|| ft_isnumeric(av[1]) == 1)
-		return (ft_putstr_fd("Invalid philos number\n", 2), 1);
+		return (ft_putstr_fd(RED "Invalid philos number\n" RESET, 2), 1);
 	if (ft_atoll(av[2]) <= 0 || ft_isnumeric(av[2]) == 1)
-		return (ft_putstr_fd("Invalid time to die\n", 2), 1);
+		return (ft_putstr_fd(RED "Invalid time to die\n" RESET, 2), 1);
 	if (ft_atoll(av[3]) <= 0 || ft_isnumeric(av[3]) == 1)
-		return (ft_putstr_fd("Invalid time to eat\n", 2), 1);
+		return (ft_putstr_fd(RED "Invalid time to eat\n" RESET, 2), 1);
 	if (ft_atoll(av[4]) <= 0 || ft_isnumeric(av[4]) == 1)
-		return (ft_putstr_fd("Invalid time to sleep\n", 2), 1);
+		return (ft_putstr_fd(RED "Invalid time to sleep\n" RESET, 2), 1);
 	if (av[5] && (ft_atoll(av[5]) < 0 || ft_isnumeric(av[5]) == 1))
-		return (ft_putstr_fd("Invalid number of time each philos must eat\n"
-				, 2), 1);
+		return (ft_putstr_fd(RED "Invalid number of time each philos must eat\n"
+				RESET, 2), 1);
 	return (0);
 }

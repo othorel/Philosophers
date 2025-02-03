@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/23 13:03:42 by olthorel          #+#    #+#             */
-/*   Updated: 2025/01/23 13:06:50 by olthorel         ###   ########.fr       */
+/*   Created: 2025/02/03 11:47:44 by olthorel          #+#    #+#             */
+/*   Updated: 2025/02/03 13:23:46 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	ft_strlen(char *str)
 	return (i);
 }
 
-void	ft_sem_destroy(char *str, t_table *table, sem_t *forks)
+void	ft_sem_destroy(char *str, t_data *data)
 {
 	int	i;
 
@@ -57,12 +57,16 @@ void	ft_sem_destroy(char *str, t_table *table, sem_t *forks)
 		write(2, str, ft_strlen(str));
 		write(2, "\n", 1);
 	}
-	sem_close(table->write_lock);
-	sem_close(table->dead_lock);
-	sem_close(table->meal_lock);
-	while (i < table->philos[0].num_of_philos)
+	sem_close(data->write_lock);
+	sem_close(data->meal_lock);
+	sem_close(data->dead_lock);
+	sem_unlink("/write_lock");
+	sem_unlink("/meal_lock");
+	sem_unlink("/dead_lock");
+	while (i < data->philos->num_of_philos)
 	{
-		sem_close(table->philos[i].right_fork);
+		sem_close(data->philo->forks[i]);
+		sem_unlink("/fork");
 		i++;
 	}
 }

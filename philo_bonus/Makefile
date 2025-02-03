@@ -1,10 +1,10 @@
 # Variables
 SRCS        =   src_bonus/check_args_bonus.c     \
 				src_bonus/init_all_bonus.c       \
-				src_bonus/main_bonus.c           \
+				src_bonus/main.c          		 \
 				src_bonus/philo_dead_bonus.c     \
 				src_bonus/simulation_bonus.c     \
-				src_bonus/semaphore_bonus.c      \
+				src_bonus/sem_bonus.c     		 \
 				src_bonus/utils_bonus.c                   
 
 OBJ_DIR     =   obj
@@ -38,7 +38,8 @@ $(NAME): $(OBJS) $(HEADERS)
 	@echo "$(GREEN)Usage: ./philo_bonus [time_to_die] [time_to_eat] [time_to_sleep]$(RESET)"
 
 # Cible bonus
-bonus: all
+bonus: $(NAME)
+	@echo "$(GREEN)Compilation bonus ok !$(RESET)"
 
 # Nettoyage des fichiers objets
 clean:

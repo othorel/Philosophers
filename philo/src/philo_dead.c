@@ -6,7 +6,7 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 13:19:30 by olthorel          #+#    #+#             */
-/*   Updated: 2025/01/22 16:08:33 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/02/03 13:09:42 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	check_if_dead(t_philo *philo)
 	{
 		if (philo_dead(&philo[i], philo[i].time_to_die))
 		{
-			ft_print_message("Philo died", &philo[i], philo[i].id);
+			ft_print_message(RED "Philo died" RESET, &philo[i], philo[i].id);
 			pthread_mutex_lock(philo[0].dead_lock);
 			*philo->dead = 1;
 			pthread_mutex_unlock(philo[0].dead_lock);
