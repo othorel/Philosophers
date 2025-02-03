@@ -6,7 +6,7 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/23 10:56:51 by olthorel          #+#    #+#             */
-/*   Updated: 2025/02/03 13:29:30 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/02/03 17:21:00 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,71 +14,53 @@
 # define PHILO_BONUS_H
 
 # include <stdio.h>
-# include <semaphore.h>
-# include <pthread.h>
-# include <unistd.h>
 # include <stdlib.h>
+# include <unistd.h>
+# include <pthread.h>
 # include <sys/time.h>
+# include <sys/wait.h>
 # include <fcntl.h>
+# include <semaphore.h>
 # include <signal.h>
+
+# define RED     "\x1b[31m"
+# define GREEN   "\x1b[32m"
+# define YELLOW  "\x1b[33m"
+# define BLUE    "\x1b[34m"
+# define MAGENTA "\x1b[35m"
+# define RESET   "\x1b[0m"
 
 # define MAX_PHILO 200
 
 typedef struct s_philo
 {
-	int			id;
-	int			eating;
-	int			meals_eaten;
-	int			num_of_philos;
-	int			num_times_to_eat;
-	int			*dead;
-	long		last_meal;
-	long		time_to_die;
-	long		time_to_eat;
-	long		time_to_sleep;
-	long long	start_time;
-	pid_t		pid;
-	sem_t		*forks;
-	sem_t		*write_lock;
-	sem_t		*meal_lock;
-	sem_t		*dead_lock;
-}				t_philo;
+	int				num_of_philos;
+	int				num_of_forks;
+	int				num_of_eat;
+	int				num_eat_count;
+	int				stop;
+	int				died;
+	int				*pid;
+	int				index;
+	long			time_to_die;
+	long			time_to_eat;
+	long			time_to_sleep;
+	long long int	time_start;
+	long long int	time_meal;
+	sem_t			*block_print;
+	sem_t			*block_fork;
+	pthread_t		check_monitor;
+}					t_philo;
 
-typedef struct s_data
-{
-	int			dead_flag;
-	sem_t		write_lock;
-	sem_t		meal_lock;
-	sem_t		dead_lock;
-	t_philo		*philo;
-}				t_data;
+t_philo		*ft_init_philo(int ac, char **av);
+void		*ft_check_monitor(void *ac);
+void		philo_start_simul(t_philo *philo);
+void		ft_cleanup(t_philo **philo);
 
-void	ft_putstr_fd(char *str, int fd);
-void	ft_print_message(char *str, t_philo *philo, int id);
-int		ft_isnumeric(char *av);
-int		ft_check_args(char **av);
-
-void	ft_init_input(t_philo *philo, char **av);
-void	ft_init_forks(sem_t **forks, int philo);
-void	ft_init_philos(t_philo *philo, t_data *data, sem_t *forks, char **av);
-void	ft_init_data(t_data *data, t_philo *philo);
-
-int		ft_dead_loop(t_philo *philo);
-void	*ft_philo_simul(void *ptr);
-int		ft_create_process(t_data *data, t_philo *philo);
-
-void	ft_eat(t_philo *philo);
-void	ft_sleep(t_philo *philo);
-void	ft_philo(t_philo *philo);
-int		ft_atoll(char *str);
-int		ft_strlen(char *str);
-void	ft_sem_destroy(char *str, t_data *data);
-int		ft_get_time(void);
-int		ft_usleep(unsigned int ms);
-
-int		philo_dead(t_philo *philo, size_t die);
-int		check_if_dead(t_philo *philo);
-int		check_if_ate(t_philo *philo);
-void	*sem_monitor(void *ptr);
+int			ft_strlen(char *str);
+int			ft_print_error(char *str);
+long long	ft_get_time(void);
+void		ft_usleep(long long time, t_philo *philo);
+void		ft_print_message(t_philo *philo, char *str);
 
 #endif

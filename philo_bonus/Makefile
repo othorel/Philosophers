@@ -1,11 +1,8 @@
 # Variables
-SRCS        =   src_bonus/check_args_bonus.c     \
-				src_bonus/init_all_bonus.c       \
-				src_bonus/main.c          		 \
-				src_bonus/philo_dead_bonus.c     \
-				src_bonus/simulation_bonus.c     \
-				src_bonus/sem_bonus.c     		 \
-				src_bonus/utils_bonus.c                   
+SRCS        =  	src_bonus/init_all.c       \
+				src_bonus/main.c           \
+				src_bonus/simulation.c     \
+				src_bonus/utils.c                   
 
 OBJ_DIR     =   obj
 OBJS        =   $(SRCS:src_bonus/%.c=$(OBJ_DIR)/%.o)
