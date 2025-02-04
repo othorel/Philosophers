@@ -6,7 +6,7 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/23 10:56:51 by olthorel          #+#    #+#             */
-/*   Updated: 2025/02/03 17:21:00 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/02/04 10:02:00 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct s_philo
 	long long int	time_meal;
 	sem_t			*block_print;
 	sem_t			*block_fork;
+	sem_t			*block_meal;
 	pthread_t		check_monitor;
 }					t_philo;
 
@@ -56,6 +57,7 @@ t_philo		*ft_init_philo(int ac, char **av);
 void		*ft_check_monitor(void *ac);
 void		philo_start_simul(t_philo *philo);
 void		ft_cleanup(t_philo **philo);
+void		ft_free_philo(t_philo *philo);
 
 int			ft_strlen(char *str);
 int			ft_print_error(char *str);
