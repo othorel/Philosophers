@@ -1,10 +1,7 @@
 # Variables
-SRCS        =   src/check_args.c     \
-				src/init_all.c       \
+SRCS        =  	src/init_all.c       \
 				src/main.c           \
-				src/philo_dead.c     \
 				src/simulation.c     \
-				src/thread.c         \
 				src/utils.c                   
 
 OBJ_DIR     =   obj
