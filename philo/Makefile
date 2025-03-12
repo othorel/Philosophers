@@ -1,8 +1,12 @@
 # Variables
 SRCS        =  	src/init_all.c       \
 				src/main.c           \
+				src/monitoring.c     \
 				src/simulation.c     \
-				src/utils.c                   
+				src/utils_av.c       \
+				src/utils_mutex.c    \
+				src/utils_str.c      \
+				src/utils_time.c     
 
 OBJ_DIR     =   obj
 OBJS        =   $(SRCS:philo/%.c=$(OBJ_DIR)/%.o)
