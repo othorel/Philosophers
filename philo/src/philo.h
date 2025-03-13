@@ -64,16 +64,16 @@ typedef struct s_data
 
 void	ft_init_av(t_philo *philo, char **av);
 void	ft_init_philo(t_philo *philo, t_data *data, pthread_mutex_t *forks,
-		char **av);
+			char **av);
 void	ft_init_forks(pthread_mutex_t *forks, int nb);
 
 /* ************************************************************************** */
 /*							MONITORING   									  */
 /* ************************************************************************** */
 
-int	ft_check(t_philo *philo, long long time_to_die);
-int	ft_check_if_dead(t_philo *philo);
-int	ft_check_meal(t_philo *philo);
+int		ft_check(t_philo *philo, long long time_to_die);
+int		ft_check_if_dead(t_philo *philo);
+int		ft_check_meal(t_philo *philo);
 void	*ft_monitoring(void *ptr);
 
 /* ************************************************************************** */
@@ -89,9 +89,9 @@ void	*ft_routine(void *ptr);
 /*							UTILS ARGV										  */
 /* ************************************************************************** */
 
-int			ft_is_numeric(char *av);
-int			ft_atol_av(const char *str);
-int			ft_check_av(char **av);
+int		ft_is_numeric(char *av);
+int		ft_atol_av(const char *str);
+int		ft_check_av(char **av);
 
 /* ************************************************************************** */
 /*							UTILS MUTEX										  */
@@ -99,22 +99,22 @@ int			ft_check_av(char **av);
 
 void	ft_init_mutex(t_data *data, t_philo *philo);
 void	ft_destory_mutex(char *str, t_data *data, pthread_mutex_t *forks);
-int	ft_create_thread(t_data *data, pthread_mutex_t *forks);
+int		ft_create_thread(t_data *data, pthread_mutex_t *forks);
 
 /* ************************************************************************** */
 /*							UTILS STR										  */
 /* ************************************************************************** */
 
-int			ft_strlen(char *str);
-int			ft_print_error(char *str);
-int			ft_dead_lock(t_philo *philo);
+int		ft_strlen(char *str);
+int		ft_print_error(char *str);
+int		ft_dead_lock(t_philo *philo);
 void	ft_print_message(char *str, t_philo *philo, int id);
 
 /* ************************************************************************** */
 /*							UTILS TIME										  */
 /* ************************************************************************** */
 
-long long	ft_get_time(void);
-int	ft_usleep(long long milliseconds);
+int		ft_get_time(void);
+int		ft_usleep(long long ms);
 
 #endif

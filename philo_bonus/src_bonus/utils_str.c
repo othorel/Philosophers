@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils_str.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/03 13:52:16 by olthorel          #+#    #+#             */
-/*   Updated: 2025/02/04 15:05:52 by olthorel         ###   ########.fr       */
+/*   Created: 2025/03/13 14:03:11 by olthorel          #+#    #+#             */
+/*   Updated: 2025/03/13 14:25:54 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	ft_strlen(char *str)
 	int	i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while (str[i])
 		i++;
 	return (i);
@@ -32,32 +34,22 @@ int	ft_print_error(char *str)
 	exit (1);
 }
 
-long long	ft_get_time(void)
+int	ft_dead_lock(t_philo *philo)
 {
-	struct timeval	time;
-
-	gettimeofday(&time, NULL);
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+	sem_wait(philo->dead_lock);
+	if (*philo->dead == 1)
+		return (sem_post(philo->dead_lock), 1);
+	sem_post(philo->dead_lock);
+	return (0);
 }
 
-void	ft_usleep(long long time, t_philo *philo)
+void	ft_print_message(char *str, t_philo *philo, int id)
 {
-	long long	i;
+	long long	time;
 
-	i = ft_get_time();
-	while (!philo->stop)
-	{
-		if (ft_get_time() - i >= time)
-			break ;
-		usleep(500);
-	}
-}
-
-void	ft_print_message(t_philo *philo, char *str)
-{
-	sem_wait(philo->block_print);
-	if (!philo->stop)
-		printf("%lld %d %s\n", ft_get_time() - philo->time_start,
-			philo->index, str);
-	sem_post(philo->block_print);
+	sem_wait(philo->write_lock);
+	time = ft_get_time() - philo->start_time;
+	if (!ft_dead_lock(philo))
+		printf("%lld %d %s\n", time, id, str);
+	sem_post(philo->write_lock);
 }

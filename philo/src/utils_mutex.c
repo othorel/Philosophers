@@ -6,7 +6,7 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 10:27:31 by olthorel          #+#    #+#             */
-/*   Updated: 2025/03/12 16:44:39 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/03/13 09:40:43 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,22 +47,22 @@ int	ft_create_thread(t_data *data, pthread_mutex_t *forks)
 	int			i;
 
 	if (pthread_create(&observer, NULL, &ft_monitoring, data->philos) != 0)
-		ft_destory_mutex("Thread creation error", data, forks);
+		ft_destory_mutex(RED "[Thread creation error]" RESET, data, forks);
 	i = 0;
 	while (i < data->philos[0].num_of_philos)
 	{
 		if (pthread_create(&data->philos[i].thread, NULL, &ft_routine,
 				&data->philos[i]) != 0)
-			ft_destory_mutex("Thread creation error", data, forks);
+			ft_destory_mutex(RED "[Thread creation error]" RESET, data, forks);
 		i++;
 	}
 	i = 0;
 	if (pthread_join(observer, NULL) != 0)
-		ft_destory_mutex("Thread join error", data, forks);
+		ft_destory_mutex(RED "[Thread join error]" RESET, data, forks);
 	while (i < data->philos[0].num_of_philos)
 	{
 		if (pthread_join(data->philos[i].thread, NULL) != 0)
-			ft_destory_mutex("Thread join error", data, forks);
+			ft_destory_mutex(RED "[Thread join error]" RESET, data, forks);
 		i++;
 	}
 	return (0);

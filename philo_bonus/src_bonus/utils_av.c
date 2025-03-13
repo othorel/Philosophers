@@ -5,12 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/12 13:07:21 by olthorel          #+#    #+#             */
-/*   Updated: 2025/03/13 09:39:25 by olthorel         ###   ########.fr       */
+/*   Created: 2025/02/03 13:52:16 by olthorel          #+#    #+#             */
+/*   Updated: 2025/03/13 14:16:12 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 int	ft_is_numeric(char *av)
 {
