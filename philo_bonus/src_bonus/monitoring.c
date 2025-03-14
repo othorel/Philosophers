@@ -6,77 +6,86 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 14:03:30 by olthorel          #+#    #+#             */
-/*   Updated: 2025/03/13 15:01:49 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/03/14 11:18:49 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-int	ft_check(t_philo *philo, long long time_to_die)
+int	ft_check_meals(t_philo philo, int last_meal)
 {
-	sem_wait(philo->meal_lock);
-	if (ft_get_time() - philo->last_meal >= time_to_die)
-		return (sem_post(philo->meal_lock), 1);
-	sem_post(philo->meal_lock);
+	if (philo.data->check_meal && last_meal == philo.data->num -1
+		&& philo.iter_num == philo.data->max_iter)
+		return (ft_usleep(300));
 	return (0);
 }
 
-int	ft_check_if_dead(t_philo *philo)
+void	*ft_check_thread(void *ptr)
 {
-	int	i;
-
-	i = 0;
-	while (i < philo[0].num_of_philos)
-	{
-		if (ft_check(&philo[i], philo[i].time_to_die))
-		{
-			ft_print_message(RED "died" RESET, &philo[i], philo[i].id);
-			sem_wait(philo[0].dead_lock);
-			*philo->dead = 1;
-			sem_post(philo[0].dead_lock);
-			return (1);
-		}
-		i++;
-	}
-	return (0);
-}
-
-int	ft_check_meal(t_philo *philo)
-{
-	int	i;
-	int	finished_eating;
-
-	i = 0;
-	finished_eating = 0;
-	if (philo[0].num_times_to_eat == -1)
-		return (0);
-	while (i < philo[0].num_of_philos)
-	{
-		sem_wait(philo[i].meal_lock);
-		if (philo[i].meals_eaten >= philo[i].num_times_to_eat)
-			finished_eating++;
-		sem_post(philo[i].meal_lock);
-		i++;
-	}
-	if (finished_eating == philo[0].num_of_philos)
-	{
-		sem_wait(philo[0].dead_lock);
-		*philo->dead = 1;
-		sem_post(philo[0].dead_lock);
-		return (1);
-	}
-	return (0);
-}
-
-void	*ft_monitoring(void *ptr)
-{
+	int		i;
 	t_philo	*philo;
-
-	philo = (t_philo *)ptr;
-	while (1)
+	t_data	*data;
+	
+	data = (t_data *)ptr;
+	philo = (t_philo *)data->philo;
+	while (!data->ready)
+		continue;
+	while (!data->over)
 	{
-		if (ft_check_if_dead(philo) == 1 || ft_check_meal(philo) == 1)
-			break ;
+		i = -1;
+		while (++i < data->num)
+		{
+			if (ft_check_death(&philo[i]) || ft_check_meals(philo[i], i))
+				data->over = 1;
+		}
 	}
-	return (ptr);
+	return (NULL);
+}
+
+int	ft_init_thread(t_data *data, t_philo *philo)
+{
+	pthread_t	death;
+	int			i;
+
+	i = -1;
+	data->start = ft_get_time();
+	if (pthread_create(&death, NULL, &ft_check_thread, data) == -1)
+		return (ft_print_error("Error\nFailed to create death thread\n", data, philo, 2));
+	while (++i < data->num)
+	{
+		philo[i].thread_start = data->start;
+		philo[i].last_meal = data->start;
+		if (pthread_create(&philo[i].thread, NULL,
+				&ft_routine, &philo[i]) == -1)
+			return (ft_print_error("Error\nFailed to create thread\n", data, philo, 2));
+	}
+	data->ready = 1;
+	pthread_join(death, NULL);
+	return (0);
+}
+
+void	ft_end_thread(t_data *data, t_philo *philo)
+{
+	int	i;
+
+	i = -1;
+	while (++i < data->num)
+		pthread_join(philo[i].thread, NULL);
+	ft_usleep(2 * data->num);
+	sem_close(data->death);
+	sem_unlink("/death");
+	sem_close(data->fork);
+	sem_unlink("/fork");
+	free(philo);
+}
+
+int	ft_philosophers(t_data *data)
+{
+	data->philo = malloc(sizeof(t_philo) * data->num);
+	if (!data->philo || ft_init_philo(data, data->philo))
+		return (EXIT_FAILURE);
+	if (ft_init_thread(data, data->philo))
+		return (EXIT_FAILURE);
+	ft_end_thread(data, data->philo);
+	return (0);
 }

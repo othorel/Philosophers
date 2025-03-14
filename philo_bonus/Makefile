@@ -3,7 +3,6 @@ SRCS        =  	src_bonus/init_all.c       \
 				src_bonus/monitoring.c     \
 				src_bonus/simulation.c     \
 				src_bonus/utils_av.c       \
-				src_bonus/utils_sem.c      \
 				src_bonus/utils_str.c      \
 				src_bonus/utils_time.c                 
 
