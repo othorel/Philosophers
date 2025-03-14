@@ -6,80 +6,35 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 14:42:22 by olthorel          #+#    #+#             */
-/*   Updated: 2025/03/14 11:30:01 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/03/14 14:27:55 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-int	ft_died(t_philo *philo, int unlock, int print)
+void	ft_routine(t_philo *philo)
 {
-	if (unlock)
+	if (pthread_create(&philo->check_monitor, \
+			NULL, &ft_check_monitoring, philo))
+		ft_print_error(RED "[Error: Failed to create the thread]" RESET);
+	if (philo->index % 2 == 0)
+		usleep(1000);
+	while (1)
 	{
-		sem_post(philo->data->fork);
-		sem_post(philo->data->fork);
+		sem_wait(philo->fork_lock);
+		ft_print_message(philo, GREEN "has taken a fork" RESET);
+		sem_wait(philo->fork_lock);
+		ft_print_message(philo, GREEN "has taken a fork" RESET);
+		ft_print_message(philo, YELLOW "is eating" RESET);
+		ft_usleep(philo->time_to_eat, philo);
+		philo->time_to_meal = ft_get_time();
+		sem_post(philo->fork_lock);
+		sem_post(philo->fork_lock);
+		philo->num_eat_count += 1;
+		ft_print_message(philo, BLUE "is sleeping" RESET);
+		ft_usleep(philo->time_to_sleep, philo);
+		ft_print_message(philo, MAGENTA "is thinking" RESET);
 	}
-	if (print)
-	{
-		sem_wait(philo->data->death);
-		printf("%ld %d %s\n", ft_get_time() - philo->thread_start,
-			philo->id, RED "died" RESET);
-		sem_post(philo->data->death);
-	}
-	return (1);
-}
-
-int	ft_check_death(t_philo *philo)
-{
-	long	now;
-
-	sem_wait(philo->data->death);
-	now = ft_get_time() - philo->last_meal;
-	if (now >= philo->data->time_to_die)
-	{
-		philo->data->over = 1;
-		philo->dead = 1;
-		sem_post(philo->data->death);
-		return (ft_died(philo, 1, 1));
-	}
-	sem_post(philo->data->death);
-	return (0);
-}
-
-void	ft_sleep_and_think(t_philo *philo)
-{
-	ft_usleep(philo->data->time_to_sleep);
-	ft_print_message(philo, BLUE "is sleeping" RESET);
-	ft_print_message(philo, MAGENTA "is thinking" RESET);
-}
-
-void	ft_eat(t_philo *philo)
-{
-	sem_wait(philo->data->fork);
-	ft_print_message(philo, GREEN "has taken a fork" RESET);
-	sem_wait(philo->data->fork);
-	ft_print_message(philo, GREEN "has taken a fork" RESET);
-	philo->last_meal = ft_get_time();
-	ft_print_message(philo, YELLOW "is eating" RESET);
-	ft_usleep(philo->data->time_to_eat);
-	philo->iter_num++;
-	sem_post(philo->data->fork);
-	sem_post(philo->data->fork);
-}
-
-void	*ft_routine(void *ptr)
-{
-	t_philo	*philo;
-
-	philo = (t_philo *)ptr;
-	while (!philo->data->ready)
-		continue ;
-	if (philo->id & 1)
-		ft_usleep(philo->data->time_to_eat * 0.9 + 1);
-	while (!philo->data->over)
-	{
-		ft_eat(philo);
-		ft_sleep_and_think(philo);
-	}
-	return (NULL);
+	if (pthread_join(philo->check_monitor, NULL))
+		ft_print_error(RED "[Error: Failed to join the thread]" RESET);
 }

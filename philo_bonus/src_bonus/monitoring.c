@@ -6,86 +6,65 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 14:03:30 by olthorel          #+#    #+#             */
-/*   Updated: 2025/03/14 11:37:53 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/03/14 14:36:24 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-int	ft_check_meals(t_philo philo, int last_meal)
+void	*ft_check_monitoring(void *av)
 {
-	if (philo.data->check_meal && last_meal == philo.data->num -1
-		&& philo.iter_num == philo.data->max_iter)
-		return (ft_usleep(300));
-	return (0);
-}
-
-void	*ft_check_thread(void *ptr)
-{
-	int		i;
 	t_philo	*philo;
-	t_data	*data;
-	
-	data = (t_data *)ptr;
-	philo = (t_philo *)data->philo;
-	while (!data->ready)
-		continue;
-	while (!data->over)
+
+	philo = (t_philo *)av;
+	while (!philo->stop)
 	{
-		i = -1;
-		while (++i < data->num)
+		usleep(100);
+		if (ft_get_time() - philo->time_to_meal > philo->time_to_die)
 		{
-			if (ft_check_death(&philo[i]) || ft_check_meals(philo[i], i))
-				data->over = 1;
+			philo->died = 1;
+			sem_wait(philo->write_lock);
+			printf("%lld %d %s\n", ft_get_time() - philo->time_to_start,
+				philo->index, RED "died" RESET);
+			philo->stop = 1;
+			break ;
+		}
+		if (philo->num_eat != -1 && philo->num_eat_count >= philo->num_eat)
+		{
+			philo->stop = 1;
+			break ;
 		}
 	}
-	return (NULL);
+	if (philo->died)
+		exit (1);
+	else
+		exit (0);
 }
 
-int	ft_init_thread(t_data *data, t_philo *philo)
+void	ft_exit_philo(t_philo **philo)
 {
-	pthread_t	death;
-	int			i;
+	t_philo	*temp;
+	int		i;
+	int		status;
 
-	i = -1;
-	data->start = ft_get_time();
-	if (pthread_create(&death, NULL, &ft_check_thread, data) == -1)
-		return (ft_print_error(RED "[Error: Failed to create death thread]" RESET, data, philo, 2));
-	while (++i < data->num)
+	temp = *philo;
+	i = 0;
+	while (i < temp->num_philos)
 	{
-		philo[i].thread_start = data->start;
-		philo[i].last_meal = data->start;
-		if (pthread_create(&philo[i].thread, NULL,
-				&ft_routine, &philo[i]) == -1)
-			return (ft_print_error(RED "[Error: Failed to create thread" RESET, data, philo, 2));
+		waitpid(-1, &status, 0);
+		if (status != 0)
+		{
+			i = -1;
+			while (++i < temp->num_philos)
+				kill(temp->pid[i], SIGKILL);
+			break ;
+		}
+		i++;
 	}
-	data->ready = 1;
-	pthread_join(death, NULL);
-	return (0);
-}
-
-void	ft_end_thread(t_data *data, t_philo *philo)
-{
-	int	i;
-
-	i = -1;
-	while (++i < data->num)
-		pthread_join(philo[i].thread, NULL);
-	ft_usleep(2 * data->num);
-	sem_close(data->death);
-	sem_unlink("/death");
-	sem_close(data->fork);
-	sem_unlink("/fork");
-	free(philo);
-}
-
-int	ft_philosophers(t_data *data)
-{
-	data->philo = malloc(sizeof(t_philo) * data->num);
-	if (!data->philo || ft_init_philo(data, data->philo))
-		return (EXIT_FAILURE);
-	if (ft_init_thread(data, data->philo))
-		return (EXIT_FAILURE);
-	ft_end_thread(data, data->philo);
-	return (0);
+	sem_close(temp->write_lock);
+	sem_close(temp->fork_lock);
+	sem_unlink("/write_lock");
+	sem_unlink("/fork_lock");
+	free(temp->pid);
+	free(temp);
 }

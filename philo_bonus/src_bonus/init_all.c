@@ -6,64 +6,57 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 14:05:15 by olthorel          #+#    #+#             */
-/*   Updated: 2025/03/14 11:37:36 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/03/14 14:37:48 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-int	ft_init_philo(t_data *data, t_philo *philo)
+t_philo	*ft_init_data(int ac, char **av)
 {
-	int	i;
-	
-	i = 0;
-	while (i < data->num)
+	t_philo	*temp;
+
+	temp = (t_philo *)malloc(sizeof(t_philo));
+	if (!temp)
+		ft_print_error(RED "[Error: Failed to malloc philo]" RESET);
+	temp->num_philos = ft_atol_av(av[1]);
+	temp->num_forks = temp->num_philos;
+	temp->time_to_die = ft_atol_av(av[2]);
+	temp->time_to_eat = ft_atol_av(av[3]);
+	temp->time_to_sleep = ft_atol_av(av[4]);
+	if (temp->num_philos < 1 || temp->num_philos > 200
+		|| temp->time_to_die == -1 || temp->time_to_eat == -1
+		|| temp->time_to_sleep == -1)
+		ft_print_error(RED "[Error: Wrong arguments]" RESET);
+	temp->num_eat = -1;
+	if (ac == 6)
 	{
-		philo[i].id = i + 1;
-		philo[i].dead = 0;
-		philo[i].iter_num = 0;
-		philo[i].thread_start = 0;
-		philo[i].last_meal = 0;
-		philo[i].data = data;
-		i++;
+		temp->num_eat = ft_atol_av(av[5]);
+		if (temp->num_eat == -1)
+			ft_print_error(RED "[Error: Wrong arguments]" RESET);
 	}
-	return (0);
+	temp->num_eat_count = 0;
+	temp->stop = 0;
+	temp->died = 0;
+	return (temp);
 }
 
-int	ft_init_sem(t_data *data)
+t_philo	*ft_init_philo(int ac, char **av)
 {
-	sem_unlink("/death");
-	sem_unlink("/fork");
-	data->death = sem_open("/death", O_CREAT, 0666, 1);
-	if (data->death == SEM_FAILED)
-		return (ft_print_error(RED "[Error: sem_open]" RESET, data, 0, 1));
-	data->fork = sem_open("/fork", O_CREAT, 0666, data->num);
-	if (data->fork == SEM_FAILED)
-		return (ft_print_error(RED "[Error: sem_open]" RESET, data, 0, 1));
-	return (0);
-}
+	t_philo	*temp;
 
-int	ft_init_data(t_data *data, char **av)
-{
-	int	sem;
-	
-	sem = -1;
-	data->num = ft_atol_av(av[1]);
-	data->time_to_die = ft_atol_av(av[2]);
-	data->time_to_eat = ft_atol_av(av[3]);
-	data->time_to_sleep = ft_atol_av(av[4]);
-	data->max_iter = -2;
-	data->check_meal = 0;
-	data->ready = 0;
-	if (av[5])
-	{
-		data->check_meal = 1;
-		data->max_iter = ft_atol_av(av[5]);
-	}
-	data->over = 0;
-	if (data->num > 0)
-	sem = ft_init_sem(data);
-	return (sem || data->num <= 0 || data->time_to_die <= 0
-		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0
-			|| data->max_iter == 0 || data->max_iter == -1);
+	if (ac < 5 || ac > 6)
+		ft_print_error(RED "[Error: Wrong number of arguments]" RESET);
+	temp = ft_init_data(ac, av);
+	temp->pid = (int *)malloc(sizeof(int) * temp->num_forks);
+	if (!temp->pid)
+		ft_print_error(RED "[Error: malloc error (init pid)]" RESET);
+	sem_unlink("/write_lock");
+	sem_unlink("/fork_lock");
+	temp->write_lock = sem_open("/write_lock", O_CREAT, 0644, 1);
+	temp->fork_lock = sem_open("/fork_lock", O_CREAT, \
+								0644, temp->num_forks);
+	if (temp->write_lock == NULL || temp->fork_lock == NULL)
+		ft_print_error(RED "[Error: semaphore open error]" RESET);
+	return (temp);
 }
