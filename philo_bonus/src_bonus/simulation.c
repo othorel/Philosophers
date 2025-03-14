@@ -6,7 +6,7 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 14:42:22 by olthorel          #+#    #+#             */
-/*   Updated: 2025/03/14 11:23:28 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/03/14 11:30:01 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	ft_died(t_philo *philo, int unlock, int print)
 	{
 		sem_wait(philo->data->death);
 		printf("%ld %d %s\n", ft_get_time() - philo->thread_start,
-			philo->id, "died");
+			philo->id, RED "died" RESET);
 		sem_post(philo->data->death);
 	}
 	return (1);
@@ -49,18 +49,18 @@ int	ft_check_death(t_philo *philo)
 void	ft_sleep_and_think(t_philo *philo)
 {
 	ft_usleep(philo->data->time_to_sleep);
-	ft_print_message(philo, "is sleeping");
-	ft_print_message(philo, "is thinking");
+	ft_print_message(philo, BLUE "is sleeping" RESET);
+	ft_print_message(philo, MAGENTA "is thinking" RESET);
 }
 
 void	ft_eat(t_philo *philo)
 {
 	sem_wait(philo->data->fork);
-	ft_print_message(philo, "has taken a fork");
+	ft_print_message(philo, GREEN "has taken a fork" RESET);
 	sem_wait(philo->data->fork);
-	ft_print_message(philo, "has taken a fork");
+	ft_print_message(philo, GREEN "has taken a fork" RESET);
 	philo->last_meal = ft_get_time();
-	ft_print_message(philo, "is eating");
+	ft_print_message(philo, YELLOW "is eating" RESET);
 	ft_usleep(philo->data->time_to_eat);
 	philo->iter_num++;
 	sem_post(philo->data->fork);

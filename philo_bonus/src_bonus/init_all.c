@@ -6,7 +6,7 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 14:05:15 by olthorel          #+#    #+#             */
-/*   Updated: 2025/03/14 10:44:31 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/03/14 11:37:36 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,10 @@ int	ft_init_sem(t_data *data)
 	sem_unlink("/fork");
 	data->death = sem_open("/death", O_CREAT, 0666, 1);
 	if (data->death == SEM_FAILED)
-		return (ft_print_error("Error: sem_open\n", data, 0, 1));
+		return (ft_print_error(RED "[Error: sem_open]" RESET, data, 0, 1));
 	data->fork = sem_open("/fork", O_CREAT, 0666, data->num);
 	if (data->fork == SEM_FAILED)
-		return (ft_print_error("Error: sem_open\n", data, 0, 1));
+		return (ft_print_error(RED "[Error: sem_open]" RESET, data, 0, 1));
 	return (0);
 }
 

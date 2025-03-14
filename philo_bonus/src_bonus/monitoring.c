@@ -6,7 +6,7 @@
 /*   By: olthorel <olthorel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 14:03:30 by olthorel          #+#    #+#             */
-/*   Updated: 2025/03/14 11:18:49 by olthorel         ###   ########.fr       */
+/*   Updated: 2025/03/14 11:37:53 by olthorel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,14 @@ int	ft_init_thread(t_data *data, t_philo *philo)
 	i = -1;
 	data->start = ft_get_time();
 	if (pthread_create(&death, NULL, &ft_check_thread, data) == -1)
-		return (ft_print_error("Error\nFailed to create death thread\n", data, philo, 2));
+		return (ft_print_error(RED "[Error: Failed to create death thread]" RESET, data, philo, 2));
 	while (++i < data->num)
 	{
 		philo[i].thread_start = data->start;
 		philo[i].last_meal = data->start;
 		if (pthread_create(&philo[i].thread, NULL,
 				&ft_routine, &philo[i]) == -1)
-			return (ft_print_error("Error\nFailed to create thread\n", data, philo, 2));
+			return (ft_print_error(RED "[Error: Failed to create thread" RESET, data, philo, 2));
 	}
 	data->ready = 1;
 	pthread_join(death, NULL);
