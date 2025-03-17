@@ -1,7 +1,7 @@
 # 🧑‍🎓 Philosophers Project - 42
 
 <p align="center">
-  <img src="https://github.com/leogaudin/42_project_badges/raw/main/badges/push_swap_bonus.webp" />
+  <img src="https://github.com/leogaudin/42_project_badges/raw/main/badges/philosophers_bonus.webp"/>
 </p>
 
 Welcome to Philosophers, a project at 42 that explores multithreading and synchronization. In this project, you'll implement a simulation of philosophers sitting at a table, thinking, eating, and sleeping while ensuring no philosopher starves. This project focuses on thread management and mutual exclusion using mutexes (for the mandatory part) and semaphores (for the bonus part).
